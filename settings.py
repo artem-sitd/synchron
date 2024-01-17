@@ -4,11 +4,7 @@ import json
 import sys
 import config
 import messages as MS
-import URLS
-
-
-def start_work():
-    pass
+from URLS import upload_get_delete_urls, head_auth, check_token_url
 
 
 # Настройка папки в облаке
@@ -18,18 +14,16 @@ def set_cloud_folder():
     while True:
         cloud_folder = input()
         try:
-            response = requests.get(URLS.cloud_folder_url(cloud_folder), headers=URLS.head_auth)
+            response = requests.get(upload_get_delete_urls(cloud_folder), headers=head_auth)
             if response.status_code == 200:
                 with open('.env', 'a') as data:
                     print(f'\nCLOUD_FOLDER="{cloud_folder}"', file=data)
-                print('Папка зарегистрирована')
-                return True
+                print('Папка зарегистрирована. Все настройик выполнены - начинаем работу.\n')
             else:
                 for _ in MS.wrong_cloud_folder:
                     print(_)
         except Exception as er:
             print('что-то пошло не так', 'ошибка:', er)
-            return False
 
 
 # Настройка периода обновления
@@ -41,10 +35,11 @@ def set_period():
             period = int(input())
             with open('.env', 'a') as data:
                 print(f'\nPERIOD="{period}"', file=data)
-            print('Зада период: ', period, 'секунд')
-            set_cloud_folder()
+            print('Задан период: ', period, 'секунд')
+            break
         except ValueError:
             print('Необходимо вводить только цифры. Введите период обновления в секундах: ')
+    set_cloud_folder()
 
 
 # Настройке отслеживаемой локальной папки
@@ -57,16 +52,16 @@ def set_self_folder():
             with open('.env', 'a') as data:
                 print(f'\nSELF_FOLDER="{path}"', file=data)
             print('Локальная папка установлена\n')
-            set_period()
             break
         else:
             print('По указанному пути указанной папки не обнаружено, укажите путь к локальной папке: ')
+    set_period()
 
 
 # Проверка корректности токена
 def check_token(token) -> bool:
     try:
-        response_check_token = requests.get(URLS.check_token_url, headers=URLS.head_auth)
+        response_check_token = requests.get(check_token_url, headers=head_auth)
         if response_check_token.status_code == 200:
             print('Токен актуален и корректен\n')
             return True
@@ -108,4 +103,5 @@ def choice_to_start():
         print('\nПриступаем к настройкам\n')
         set_token()
     if choice_to_work == 2:
-        print('\nПроверка окружения\n')
+        # вставить исполняемую функцию
+        print('\nНачинаем работу\n')

@@ -1,27 +1,30 @@
 import requests
-import json
-from urllib.parse import quote
-import config
 
-token = config.OAuth_TOKEN
+# Параметры запроса для получения URL для загрузки файла
+disk_path = '/folder/file.txt'
+overwrite = True
+get_upload_url_url = f'https://cloud-api.yandex.net/v1/disk/resources/upload?path={disk_path}&overwrite=true'
 
-folder_name = "социальные сети"
+# Ваш OAuth-токен
+oauth_token = 'ваш_токен'
 
-encoded_folder_name = quote(folder_name)
+# Получение URL для загрузки
+response = requests.get(get_upload_url_url, headers={'Authorization': f'OAuth {oauth_token}'})
 
-url3 = f"https://cloud-api.yandex.net/v1/disk/resources?path=disk:/{encoded_folder_name}"
+if response.status_code == 200:
+    # Извлекаем URL для загрузки из ответа
+    upload_url = response.json()['href']
 
-def cloud_folder_url(folder):
-    return (f"https://cloud-api.yandex.net/v1/disk/resources?path={folder}")
+    # Путь к локальному файлу
+    local_file_path = '/path/to/local/file.txt'
 
-check_token_url = "https://cloud-api.yandex.net/v1/disk/"
+    # Загрузка файла на полученный URL
+    with open(local_file_path, 'rb') as file:
+        upload_response = requests.put(upload_url, files={'file': file})
 
-response1 = requests.get(url3, headers={'Authorization': f'OAuth {token}'})
-
-response2 = requests.get(check_token_url, headers={'Authorization': f'OAuth {token}'})
-
-response3 = requests.get("https://cloud-api.yandex.net/v1/disk/resources/files?path=%2FЗагрузки%2F",
-                         headers={'Authorization': f'OAuth {token}'})
-
-print(response1.status_code)
-print(response1)
+    if upload_response.status_code == 201:
+        print("File uploaded successfully.")
+    else:
+        print(f"Failed to upload file. Status code: {upload_response.status_code}, Response: {upload_response.text}")
+else:
+    print(f"Failed to get upload URL. Status code: {response.status_code}, Response: {response.text}")

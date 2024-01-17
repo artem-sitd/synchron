@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 *venv/
 # C extensions
-tren.py
+
 *.so
 crm_venv/
 # Distribution / packaging
@@ -165,3 +165,6 @@ cython_debug/
 
 /down_sb/
 /sb_down/
+tren.py
+tren2.py
+tren3.py
