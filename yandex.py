@@ -68,7 +68,7 @@ class YandexCloud:
                 with open(local_file_path, 'rb') as f:
                     upload_response = requests.put(upload_url, files={'file': f})
                 if upload_response.status_code == 201:
-                    print("File uploaded successfully.")
+                    print(f'Файл: {file} загружен в облако')
                 else:
                     print(
                         f"Failed to upload file. Status code: {upload_response.status_code}, Response: {upload_response.text}")
@@ -104,8 +104,6 @@ class YandexCloud:
         added_by_name, deleted_files = self.compare_lists(dict_hash_local, cloud_files)
         if deleted_files:
             self.delete(deleted_files)
-            # Эта операция вроде не нужна
-            # cloud_files = set(cloud_files) - set(deleted_files)
         if added_by_name:
             for name in added_by_name:
                 del dict_hash_local[name]
@@ -114,6 +112,4 @@ class YandexCloud:
         self.load(files_to_upload)
         # переименовываем файлы хэшей
         create_hash()
-
-
-user1 = YandexCloud(oauth_token=config.OAuth_TOKEN, local_path=config.SELF_FOLDER, cloud_path=config.CLOUD_FOLDER)
+        print('Синхронизация произведена')

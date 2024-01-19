@@ -1,13 +1,13 @@
 import os.path
 import requests
-import json
-import sys
 import config
 import messages as MS
 from URLS import upload_get_delete_urls, head_auth, check_token_url
 
-
 # Настройка папки в облаке
+from yandex import YandexCloud
+
+
 def set_cloud_folder():
     for _ in MS.set_CLOUD_FOLDER:
         print(_)
@@ -19,6 +19,9 @@ def set_cloud_folder():
                 with open('.env', 'a') as data:
                     print(f'\nCLOUD_FOLDER="{cloud_folder}"', file=data)
                 print('Папка зарегистрирована. Все настройик выполнены - начинаем работу.\n')
+                user1 = YandexCloud(oauth_token=config.OAuth_TOKEN, local_path=config.SELF_FOLDER,
+                                    cloud_path=config.CLOUD_FOLDER)
+                user1.update()
             else:
                 for _ in MS.wrong_cloud_folder:
                     print(_)
@@ -59,7 +62,7 @@ def set_self_folder():
 
 
 # Проверка корректности токена
-def check_token(token) -> bool:
+def check_token() -> bool:
     try:
         response_check_token = requests.get(check_token_url, headers=head_auth)
         if response_check_token.status_code == 200:
@@ -76,7 +79,7 @@ def set_token():
         print(_)
     while True:
         token = input()
-        if check_token(token):
+        if check_token():
             with open('.env', 'a') as data:
                 print(f'\nOAuth_TOKEN="{token}"', file=data)
                 break
