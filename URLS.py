@@ -1,17 +1,17 @@
 from urllib.parse import quote
-import config
+
 import requests
 
 
 # В каждый запрос к api в headers необходимо вставлять
 def get_headers(token=None):
-    headers = {'Authorization': f'OAuth {token}'}
+    headers = {"Authorization": f"OAuth {token}"}
     return headers
 
 
 # URL для первичного получения токена
 def get_token_url(clientid=None):
-    url = f'https://oauth.yandex.ru/authorize?response_type=token&client_id={clientid}'
+    url = f"https://oauth.yandex.ru/authorize?response_type=token&client_id={clientid}"
     return url
 
 
@@ -20,8 +20,8 @@ check_token_url = "https://cloud-api.yandex.net/v1/disk/"
 
 
 # URL для проверки папки, удаления и  записи файлов в облаке
-def upload_get_delete_urls(folder, upload='', overwrite=''):
-    url = f'https://cloud-api.yandex.net/v1/disk/resources{upload}?path=disk:/{quote(folder)}{overwrite}'
+def upload_get_delete_urls(folder, upload="", overwrite=""):
+    url = f"https://cloud-api.yandex.net/v1/disk/resources{upload}?path=disk:/{quote(folder)}{overwrite}"
     return url
 
 
