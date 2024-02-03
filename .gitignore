@@ -146,7 +146,7 @@ diplomdj
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
+*json
 # Pyre type checker
 .pyre/
 
