@@ -1,14 +1,10 @@
 import os.path
 import time
-from shlex import quote
-
 import requests
-
 import config
 import messages as MS
 from URLS import upload_get_delete_urls, get_headers, check_token_url, check_available_url
 from config import start_env
-# Настройка папки в облаке
 from yandex import YandexCloud
 
 
@@ -160,4 +156,4 @@ def choice_to_start():
         while True:
             print('\nНачинаем работу\n')
             user1.update()
-            time.sleep(config.PERIOD)
+            time.sleep(int(config.PERIOD))

@@ -10,8 +10,7 @@
 ○	get_info() — для получения информации о хранящихся в удалённом хранилище файлах.
 """
 import os
-import time
-
+import json
 from URLS import get_headers, upload_get_delete_urls, check_available_url, check_token_url
 import config
 import requests
@@ -41,13 +40,12 @@ class YandexCloud:
                 dict_hash_local[file] = calculate_file_hash(os.path.join(config.SELF_FOLDER, file))
         if dict_hash_local:
             with open('actual_hash.json', 'w') as file:
-                print(dict_hash_local, file=file)
+                json.dump(dict_hash_local, file)
             return dict_hash_local
         else:
             print('Произошла ошибка в блоке list_local_files')
             return False
 
-    # Добавить проверку на существование папки. Может удалил или перейменовал
     # Полученеи списка файлов облака
     def list_yandex_disk_files(self):
         headers = get_headers(self.oauth_token)
@@ -134,8 +132,7 @@ class YandexCloud:
         dict_hash_local = self.list_local_files()  # Словарь хэшей файлов в локальной папке
         print('Получаем перечень файлов в облаке')
         cloud_files = self.list_yandex_disk_files()  # список файлов в папке облака
-        # added_by_name -Добавленные файлы, которых нет в облаке
-        # deleted_files - удаленные файлы из локального хранилища, но которые еще есть в облаке
+        print('cloud_files:', cloud_files)
         added_by_name, deleted_files = self.compare_lists(dict_hash_local, cloud_files)
         if deleted_files:
             self.delete(deleted_files)
@@ -143,9 +140,10 @@ class YandexCloud:
             for name in added_by_name:
                 del dict_hash_local[name]
         added_by_hash = hash_compare(dict_hash_local)
-        print('added_by_hash', added_by_hash, type(added_by_hash))
-        print('added_by_name', added_by_name, type(added_by_name))
-        files_to_upload = set(added_by_hash.keys()) | added_by_name
+        print('added_by_hash:', added_by_hash)
+        print('added_by_name:', added_by_name)
+        print('deleted_files:', deleted_files)
+        files_to_upload = added_by_hash | added_by_name
         print('files_to_upload', files_to_upload)
         self.load(files_to_upload)
 
